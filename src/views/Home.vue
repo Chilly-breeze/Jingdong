@@ -1,18 +1,30 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <Component :is="current"></Component>
+      <Tabbar @changeComponent="changeComponent"></Tabbar>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import Tabbar from '@c/tabbar/Tabbar.vue';
 export default {
-  name: 'home',
+  name: 'home1',
+  data(){
+      return {
+          current:'home'
+      }
+  },
   components: {
-    HelloWorld
+      Tabbar,
+      'home':()=>import('@c/home/Home.vue'),
+      'shopping':()=>import('@c/shopping/Shopping.vue'),
+      'my':()=>import('@c/my/My.vue'),
+  },
+  methods:{
+      changeComponent(item){
+        //   console.log(item)
+          this.current = item
+      }
   }
 }
 </script>
