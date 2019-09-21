@@ -13,23 +13,17 @@ export default new Vuex.Store({
     selectGoods: {}
   },
   mutations: {
-    setUsername: function (state, username) {
-      state.username = username;
-    },
-    clearUsername: function (state) {
-      state.username = undefined;
-    },
+    // setUsername: function (state, username) {
+    //   state.username = username;
+    // },
+    // clearUsername: function (state) {
+    //   state.username = undefined;
+    // },
     /**
      * 添加购物车商品
      */
     addShoppiongData: function (state, goods) {
-      // 判断购物车中是否已经包含该商品
-      /**
-       * some() 方法用于检测数组中的元素是否满足指定条件（函数提供）。
-          some() 方法会依次执行数组的每个元素：
-          如果有一个元素满足条件，则表达式返回true , 剩余的元素不会再执行检测。
-          如果没有满足条件的元素，则返回false。
-       */
+
       const isExist = state.shoppingDatas.some(item => {
         if (item.id === goods.id) {
           // 如果商品已经存在的话，那么让商品的数量加一
@@ -55,14 +49,24 @@ export default new Vuex.Store({
     },
     setSelectGoods: function (state, goods) {
       state.selectGoods = goods;
+    },
+    jia(state,index){
+      state.shoppingDatas[index].number += 1
+    },
+    jian(state,index){
+      state.shoppingDatas[index].number -= 1
     }
   },
   actions: {
 
   },
   getters:{
-    // number(state,data){
-    //   return state.shoppingDatas[data.index].number
-    // }
+    number(state){
+      let c = 0
+       state.shoppingDatas.forEach(item=>{
+         c += item.price * item.number
+      })
+      return c
+    }
   }
 });

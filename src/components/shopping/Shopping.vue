@@ -1,278 +1,122 @@
 <template>
-<div class="shopping">
-    <navgation-bar :isShowBack="false" :pageName="'购物车'" :navStyle="navStyle"></navgation-bar>
+  <div class="shopping">
+    <Nav :navStyle="navStyle" :pageName="'购物车'" :isShowBack="false"></Nav>
+    <!-- {{this.$store.state.shoppingDatas[0].number}} -->
+    <div class="cars">
 
-    <div class="shopping-content">
-        <div class="shopping-content-list">
-            <div class="shopping-content-list-item" v-for="(item, index) in shoppingDatas" :key="index">
-                <img class="shopping-content-list-item-check" :src="checkIcon(item.isCheck)"
-                 @click="onCheckClick(item)">
-                <img class="shopping-content-list-item-img" :src="item.img">
-                <div class="shopping-content-list-item-desc">
-                    <p class="shopping-content-list-item-desc-name" :class="{'shopping-content-list-item-desc-name-hint' : !item.isHave}">
-                        <direct v-if="item.isDirect"></direct>
-                        <no-have v-if="!item.isHave"></no-have>
-                        {{item.name}}
-                    </p>
-                    <div class="shopping-content-list-item-desc-data">
-                        <p class="shopping-content-list-item-desc-data-price">￥{{item.price | tofix2}}</p>
-                        <goods-number-manager :defaultNumber="item.number" @onNumberChange="onNumberChange(arguments, item, index)"></goods-number-manager>
-                    </div>
-                </div>
-            </div>
+      <!-- vant -->
+      <van-card
+        v-for="(item,index) in shopping"
+        :key="index"
+        :num="item.number"
+        :price="item.price"
+        :title="item.name"
+        :thumb="item.img"
+      >
+        <div slot="footer">
+          <van-button size="small" @click="jian(index)">-</van-button>
+          <van-button size="small" @click="jia(index)">+</van-button>
         </div>
-
-
-        <div class="shopping-content-total">
-
-           <div class="shopping-content-total-check">
-             <img  :src="checkIcon(totalDatas.isAll)"
-                 @click="onCheckAllClick()">
-             <p>全选</p>
-           </div>
-
-           <div class="shopping-content-total-price">
-             <p class="shopping-content-total-price-total">合计：<span>￥{{totalDatas.totalPrice | tofix2}}</span></p>
-             <p class="shopping-content-total-price-all">总额:<span>￥{{totalDatas.totalPrice | tofix2}}</span>&nbsp;&nbsp;立减:<span>￥00.00</span></p>
-           </div>
-            
-           <div class="shopping-content-total-settlement">
-             去结算({{totalDatas.goodsNumber}})
-            </div> 
-
-        </div>
+      </van-card>
+        {{this.$store.state.shoppingDatas}}
     </div>
-</div>
+    <!-- 底部购买 -->
+    <div class="footer">
+      <div class="jia">总价:<span class="span">{{ totalDatas.totalPrice | tofix2}}</span></div>
+      <div class="buy">立即购买</div>
+    </div>
+  </div>
 </template>
 
-<script>
-import NavgationBar from "@b/navigation/Navigation.vue";
-import direct from "@b/pubu/Direct.vue";
-import GoodsNumberManager from "@b/goodsNumberManager/GoodsNumberManager.vue";
+<script type="text/javascript">
+import Nav from '@b/navigation/Navigation.vue'
 export default {
-    components: {
-        NavgationBar,
-        direct,
-        GoodsNumberManager
+  data() {
+    return {
+      navStyle:{
+        background:'rgba(216, 30, 6,.8)',
+        width:'100%'
+      },
+      // 商品数据源
+      shopping:[],
+      //vant 的 num
+      vanNum:1,
+      totalDatas:{
+        totalPrice:this.$store.getters.number
+      }
+    }
+  },
+  components: {
+    Nav,
+  },
+  created(){
+    this.getShopping();
+  },
+  methods:{
+    getShopping(){
+      this.shopping = this.$store.state.shoppingDatas
     },
-    data: function () {
-        return {
-           navStyle:{
-            background:'rgba(216, 30, 6,.9)'
-            },
-            shoppingDatas: this.$store.state.shoppingDatas,
-            totalDatas: {
-              isAll: false,
-              totalPrice: 0,
-              goodsNumber: 0
-            },
-            // number:this.$store.getters.number
-        };
+    jia(index){
+      this.$store.commit('jia',index)
     },
-    methods: {
-      /**
-       * 商品是否选中的点击事件
-       */
-      onCheckClick: function (item) {
-        item.isCheck = !item.isCheck;
-        this.computeGoodsTotal();
-      },
-      /**
-       * 返回check图标
-       */
-      checkIcon: function (check) {
-        return check ? require('@img/check.svg') : require('@img/no-check.svg');
-      },
-      /**
-       * 全选按钮
-       */
-      onCheckAllClick: function () {
-        this.totalDatas.isAll = !this.totalDatas.isAll;
-
-        this.shoppingDatas.forEach(item => item.isCheck = this.totalDatas.isAll);
-        this.computeGoodsTotal();
-      },
-      /**
-       * 监听选中变化
-       */
-      computeGoodsTotal: function () {
-        this.totalDatas = {
-          isAll: true,
-          totalPrice: 0,
-          goodsNumber: 0
-        }
-
-        this.shoppingDatas.forEach(item => {
-          if (!item.isCheck) {
-            this.totalDatas.isAll = false;
-          } else {
-            this.totalDatas.totalPrice += parseFloat(item.price) * parseInt(item.number);
-            this.totalDatas.goodsNumber += parseInt(item.number);
-          }
-        });
-
-        
-      },
-      /**
-       * 监听商品数量的变化
-       */
-      onNumberChange: function ($arguments, item, index) {
-        console.log( $arguments[0])
-        let number = $arguments[0];
-        this.$store.commit('changeShoppingDataNumber', {
-          index: index,
-          number: number
-        });
-
-        if (item.isCheck) {
-          this.computeGoodsTotal();
-        }
-      } 
-      
-    },
-};
+    jian(index){
+      if(this.$store.state.shoppingDatas[index].number == 1){
+        return
+      }
+       this.$store.commit('jian',index)
+    }
+  }
+}
 </script>
 
-<style lang="scss" scoped>
-@import "@css/dimens.scss";
-@import "@css/colors.scss";
-@import "@css/mixin.scss";
-
+<style scoped lang="scss">
 .shopping {
-    height: 100%;
-    overflow: hidden;
+  position: absolute;
+  font-size: 16px;
+  width: 100%;
+  height: 100%;
+
+  // 底部
+  .footer {
+    position: fixed;
+    height: 1.333333rem;
+    bottom: 1.226667rem;
+    width: 100%;
+    background: #fff;
+    box-shadow:  0 0 23px #ccc;
+    border-bottom:1px solid #e5e5e5;
     display: flex;
-    flex-flow: column;
-
-    .shopping-content {
-        background-color: $bgColor;
-        border-top: px2rem(1) solid $lineColor;
-        height: 100%;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-
-        &-list {
-            height: 100%;
-            overflow: hidden;
-            overflow-y: auto;
-
-            &-item {
-                background-color: white;
-                padding: $marginSize;
-                display: flex;
-                border-bottom: px2rem(1) solid $lineColor;
-
-                &-check {
-                  width: $checkSize;
-                  align-self: center;
-                  padding: px2rem(6);
-                }
-
-                &-img {
-                    width: px2rem(100);
-                    height: px2rem(100);
-                }
-
-                &-desc {
-                    width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                    padding: 0 $marginSize;
-
-                    &-name {
-                        font-size: $infoSize;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        word-break: break-word;
-                        -webkit-line-clamp: 2;
-                        -webkit-box-orient: vertical;
-                        display: -webkit-box;
-                        line-height: px2rem(18);
-
-                        &-hint {
-                            color: $textHintColor;
-                        }
-                    }
-
-                    &-data {
-                        width: 100%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        margin-top: $marginSize;
-
-                        &-price {
-                            font-size: $titleSize;
-                            color: $mainColor;
-                            font-weight: 500;
-                        }
-
-                    }
-                }
-            }
-        }
-
-        &-total {
-          height: px2rem(56);
-          box-sizing: border-box;
-          display: flex;
-          align-items: center;
-          background-color: white;
-          border-top: px2rem(1) solid $lineColor;
-          position: fixed;
-          bottom: 1.226667rem;
-          width: 100%;
-
-          &-check {
-            display: flex;
-            align-items: center;
-            margin-left: $marginSize;
-            margin-right: $marginSize;
-            img {
-              width: $checkSize;
-              padding: px2rem(6);
-            }
-
-            p {
-              font-size: $infoSize;
-            }
-
-          }
-
-          &-price {
-            flex-grow: 2;
-            display: flex;
-            flex-direction: column;
-            &-total {
-              font-size: $titleSize;
-              margin-bottom: px2rem(6);
-              span {
-                font-weight: bold;
-              }
-            }
-
-            &-all {
-              font-size: $minInfoSize;
-              span {
-                font-weight: bold;
-              }
-            }
-          }
-
-          &-settlement {
-            width: px2rem(120);
-            height: 100%;
-            font-size: $titleSize;
-            background-color: $mainColor;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-        }
+    justify-content: flex-end;
+    .buy {
+      width: 2.666667rem;
+      background: orangered;
+      color: #fff;
+      text-align: center;
+      line-height: 1.226667rem;
+      font-size: 16px;
+      height: 100%;
     }
+    .jia {
+      width: 110px;
+      line-height: 1.226667rem;
+      font-size: 18px;
+    }
+    .span {
+      margin-left: 10px;
+      color: red;
+    }
+  }
+}
+// vant
+.van-button--small{
+  font-size: 23px;
+}
+.van-card__bottom {
+  line-height: 52px;
+  font-size: 18px;
+}
+.van-card__title {
+  font-size: 16px;
+  margin-top: 10px;
 }
 </style>
