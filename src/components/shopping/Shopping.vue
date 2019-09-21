@@ -14,15 +14,17 @@
         :thumb="item.img"
       >
         <div slot="footer">
-          <van-button size="small" @click="jian(index)">-</van-button>
           <van-button size="small" @click="jia(index)">+</van-button>
+          <van-button size="small" @click="jian(index)">-</van-button>
+          <van-button type="warning" size="small" text="删除" @click="deleteBuy(index)"></van-button>
+
         </div>
       </van-card>
-        {{this.$store.state.shoppingDatas}}
+        <!-- {{this.$store.state.shoppingDatas}} -->
     </div>
     <!-- 底部购买 -->
     <div class="footer">
-      <div class="jia">总价:<span class="span">{{ totalDatas.totalPrice | tofix2}}</span></div>
+      <div class="jia">总价:<span class="span">{{ totalPrice | tofix2}}</span></div>
       <div class="buy">立即购买</div>
     </div>
   </div>
@@ -41,9 +43,8 @@ export default {
       shopping:[],
       //vant 的 num
       vanNum:1,
-      totalDatas:{
-        totalPrice:this.$store.getters.number
-      }
+      totalDatas:{},
+      
     }
   },
   components: {
@@ -64,6 +65,40 @@ export default {
         return
       }
        this.$store.commit('jian',index)
+    },
+    //删除成功
+    deleteBuy(index){
+
+      this.$toast.loading({
+        mask: true,
+        duration:300
+      });
+
+      this.shopping.splice(index,1);
+      let bendi = JSON.parse(localStorage.getItem('shoppingDatas'))
+      let newVal = bendi.splice(index,1)
+      localStorage.setItem('shoppingDatas',JSON.stringify(newVal))
+
+      // 提示
+      setTimeout(()=>{
+      this.$notify(
+            { 
+              type: 'success', 
+              message: '删除成功',
+              duration:1000
+            }
+          );
+      },300)
+   
+    }
+  },
+  computed:{
+    totalPrice(){
+      let c = 0;
+        this.shopping.forEach(item=>{
+          c += item.price * item.number
+        })
+      return c
     }
   }
 }
@@ -97,7 +132,7 @@ export default {
       height: 100%;
     }
     .jia {
-      width: 110px;
+      width: 130px;
       line-height: 1.226667rem;
       font-size: 18px;
     }
@@ -118,5 +153,8 @@ export default {
 .van-card__title {
   font-size: 16px;
   margin-top: 10px;
+}
+.van-button__text {
+  font-size: 18px;
 }
 </style>

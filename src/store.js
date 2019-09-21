@@ -2,13 +2,12 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
-
+var shoppingDatas = JSON.parse(localStorage.getItem("shoppingDatas") || "[]"); 
 export default new Vuex.Store({
   state: {
     username: undefined,
     // 购物车数据
-    shoppingDatas: [
-    ],
+    shoppingDatas: shoppingDatas,
     // 进入商品详情的数据
     selectGoods: {}
   },
@@ -40,33 +39,30 @@ export default new Vuex.Store({
         Vue.set(goods, 'number', 1);
         state.shoppingDatas.push(goods);
       }
+      localStorage.setItem("shoppingDatas", JSON.stringify(state.shoppingDatas))
     },
     /**
      * 更改购物车商品数量
      */
-    changeShoppingDataNumber: function (state, data) {
-      state.shoppingDatas[data.index].number = data.number;
-    },
-    setSelectGoods: function (state, goods) {
-      state.selectGoods = goods;
-    },
+    // changeShoppingDataNumber: function (state, data) {
+    //   state.shoppingDatas[data.index].number = data.number;
+    // },
+    // setSelectGoods: function (state, goods) {
+    //   state.selectGoods = goods;
+    // },
     jia(state,index){
       state.shoppingDatas[index].number += 1
+      localStorage.setItem("shoppingDatas", JSON.stringify(state.shoppingDatas))
+
     },
     jian(state,index){
       state.shoppingDatas[index].number -= 1
+      localStorage.setItem("shoppingDatas", JSON.stringify(state.shoppingDatas))    
     }
   },
   actions: {
 
   },
   getters:{
-    number(state){
-      let c = 0
-       state.shoppingDatas.forEach(item=>{
-         c += item.price * item.number
-      })
-      return c
-    }
   }
 });

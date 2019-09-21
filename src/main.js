@@ -6,9 +6,9 @@ import '@js/rootFontSize.js'
 import '@js/filter.js'
 import '@css/index.scss'
 import axios from './utils/http'
-import { Card, Button } from 'vant';
+import { Card, Button, Notify, Toast   } from 'vant';
 
-Vue.use(Card).use(Button);
+Vue.use(Card).use(Button).use(Notify).use(Toast);
 
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
