@@ -36,10 +36,7 @@ export default {
       type: String
     },
     // 背景颜色之类的,定位等 
-    navStyle:{
-      type:String,
-      default:''
-    }
+    navStyle:null
   },
   data() {
     return {

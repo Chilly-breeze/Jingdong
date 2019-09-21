@@ -1,13 +1,18 @@
 <template>
-  <div class="goodList">
-    <Nav :pageName="'商品列表'" :isShowBack="true" class="nav-bootom"  @onLeftClick="onBackClick">
+  <div class="goodList" ref="goods">
+    <Nav :pageName="'商品列表'" :isShowBack="true" class="nav-bootom" @onLeftClick="onBackClick">
       <template v-slot:right>
         <img :src="layoutType.icon" @click="onChangelayoutTypeClick()" />
       </template>
     </Nav>
-    <div>
-      <GoodsOption></GoodsOption>
-      <List :sortGoodsData="goods" :layoutType="layoutType.type"/>
+    <div class="posi">
+      <GoodsOption @selectOption="selectOption"></GoodsOption>
+      <List
+        :sortGoodsData="goods"
+        :layoutType="layoutType.type"
+        :sort="sortType"
+        @godetail="godetail"
+      />
     </div>
   </div>
 </template>
@@ -134,8 +139,20 @@ export default {
           "volume": "9983",
           "isHave": false,
           "isDirect": false,
-          "swiperImgs": [],
-          "detailImgs": []
+          "swiperImgs": [
+            "http://imooc.res.lgdsunday.club/goods-swiper-1-1.webp.jpg",
+            "http://imooc.res.lgdsunday.club/goods-swiper-1-2.webp.jpg",
+            "http://imooc.res.lgdsunday.club/goods-swiper-1-3.webp.jpg",
+            "http://imooc.res.lgdsunday.club/goods-swiper-1-4.webp.jpg"
+          ],
+          "detailImgs": [
+            "http://imooc.res.lgdsunday.club/goods-detail-1-1.jpg",
+            "http://imooc.res.lgdsunday.club/goods-detail-1-2.jpg",
+            "http://imooc.res.lgdsunday.club/goods-detail-1-3.jpg",
+            "http://imooc.res.lgdsunday.club/goods-detail-1-4.jpg",
+            "http://imooc.res.lgdsunday.club/goods-detail-1-5.jpg",
+            "http://imooc.res.lgdsunday.club/goods-detail-1-6.jpg"
+          ]
         },
         {
           "id": "5",
@@ -308,6 +325,22 @@ export default {
     this.layoutType = this.layoutTypeDatas[0];
   },
   methods: {
+    scrollY() {
+      document.documentElement.scrollTop = 0
+    },
+    godetail(item) {
+      this.$router.push({
+        name: 'detail',
+        params: {
+          goods: item,
+          routerType: 'push'
+
+        }
+      })
+    },
+    selectOption(id) {
+      this.sortType = id
+    },
     /**
      * 后退按钮点击事件
      */
@@ -332,12 +365,27 @@ export default {
         this.layoutType = this.layoutTypeDatas[0];
       }
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    if (from.name == 'home') {
+      next(vm => {
+        vm.scrollY()
+      })
+    } else {
+      next()
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.nav-bootom {
-  border-bottom: 1px solid #e5e5e5;
+.goodList {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  .nav-bootom {
+    border-bottom: 1px solid #e5e5e5;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home1">
       <Component :is="current"></Component>
       <Tabbar @changeComponent="changeComponent"></Tabbar>
   </div>
@@ -8,7 +8,7 @@
 <script>
 import Tabbar from '@c/tabbar/Tabbar.vue';
 export default {
-  name: 'home1',
+  name:'hw',
   data(){
       return {
           current:'home'

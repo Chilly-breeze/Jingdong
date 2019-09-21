@@ -14,9 +14,14 @@ export default new Router({
       component: Home
     },
     {
-      path:'/goodList',
-      name:'goodList',
+      path: '/goodList',
+      name: 'goodList',
       component: () => import('@c/goodList/GoodList.vue')
+    },
+    {
+      path: '/detail',
+      name: 'detail',
+      component: () => import('@c/goodsdetail/GoodsDetail.vue')
     }
   ]
 })

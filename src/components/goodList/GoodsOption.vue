@@ -15,12 +15,13 @@
         </a>
       </li>
     </ul>
+    <!-- 那个多选 -->
     <transition name="fold-height">
       <div class="options-sub-content z-index-2" v-show="isShowSubContent">
         <ul class="options-sub-content-list">
           <li
             class="options-sub-content-list-item"
-            v-for="(item, index) in selectOption.subs"
+            v-for="(item, index) in optionsDatas[0].subs"
             :key="index"
              @click="onchange(item)"
           >
@@ -108,11 +109,9 @@ export default {
         this.selectOption = item;
       },
       onchange(item){
-        //   console.log(item)
-        //   this.selectOption = item
+          // console.log(item)
             this.selectOption = item
             this.optionsDatas.forEach(oitem=>{
-                this.selectOption = oitem.subs
                 oitem.subs.forEach(sitem=>{
                     if(sitem.id == item.id){
                         oitem.id = sitem.id
@@ -125,6 +124,11 @@ export default {
       gai(){
         this.isShowSubContent = false
       }
+  },
+  watch:{
+    selectOption(newval){
+      this.$emit('selectOption',newval.id)
+    }
   }
 
 }
@@ -214,9 +218,9 @@ export default {
   }
 
   /**
-            子选项内容区展开动画，当 v-if=“true” 的时候调用
-            当子选项部分展开时，初始状态max-height为0，结束状态max-height为180
-        */
+   * 子选项内容区展开动画，当 v-if=“true” 的时候调用
+   * 当子选项部分展开时，初始状态max-height为0，结束状态max-height为180
+   */
   .fold-height-enter-active {
     animation-duration: 0.3s;
     animation-name: fold-height-open;
@@ -232,9 +236,9 @@ export default {
   }
 
   /**
-            子选项内容区关闭动画，当 v-if=false 的时候调用
-            当子选项部分关闭时，初始状态max-height为180，结束状态max-height为0
-        */
+    子选项内容区关闭动画，当 v-if=false 的时候调用
+    当子选项部分关闭时，初始状态max-height为180，结束状态max-height为0
+   */
   .fold-height-leave-active {
     animation-duration: 0.3s;
     animation-name: fold-height-close;

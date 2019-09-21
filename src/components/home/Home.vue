@@ -1,7 +1,7 @@
 <template>
-  <div class="home1">
+  <div class="home1" ref="home">
     <!-- 首页搜索 -->
-    <Navbar :isShowBack="false" :style="navStyle" :isDefault="false">
+    <Navbar :isShowBack="false" :navStyle="navStyle" :isDefault="false">
       <template slot="left">
         <img :src="navIconStyle.leftIcon" alt />
       </template>
@@ -51,6 +51,7 @@ import Navbar from '@b/navigation/Navigation.vue';
 import Search from '@b/search/Search.vue';
 import { getSwiper } from "@/api/swiper.js";
 export default {
+  name:'home',
   data() {
     return {
       ///swiper
@@ -425,7 +426,9 @@ export default {
       navStyle: {
         background: '',
         position: 'fixed'
-      }
+      },
+      // 滑动高度
+      scrolltop:-1
     };
   },
   components: {
@@ -442,7 +445,14 @@ export default {
     // this.onscroll()
     // this._getGoods();
     this.navIconStyle = this.navBarSlotData.normal
-    this.windowScroll()
+  },
+  mounted(){
+    this.$nextTick(()=>{
+      this.windowScroll()
+    })
+  },
+  activated(){
+    this.$refs.home.scrollTop = this.scrolltop
   },
   methods: {
     _getSwiper() {
@@ -473,21 +483,24 @@ export default {
     // },
     windowScroll(){
        window.addEventListener('scroll',(e)=>{
-         let scrolltop = e.target.documentElement.scrollTop
+         this.scrolltop = e.target.documentElement.scrollTop
         //  console.log(scrolltop)
-         let opacity = scrolltop / this.NAV_HEIGHT
+         let opacity =this.scrolltop / this.NAV_HEIGHT
          if(opacity >= 1) {
            this.navIconStyle = this.navBarSlotData.highlight
          }else{
            this.navIconStyle = this.navBarSlotData.normal
          }
        this.navStyle.background = `rgba(255, 255, 255,${opacity})`
-
+      // console.log(opacity)
       })
     },
     goback(){
       this.$router.push({
-        name:'goodList'
+        name:'goodList',
+        params:{
+          routerType:'push'
+        }
       })
       // console.log(index)
     }
@@ -500,10 +513,9 @@ export default {
 
 <style scoped lang="scss">
 .home1 {
+  position: absolute;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  overflow-y: auto;
   &-content {
     height: 100%;
   }

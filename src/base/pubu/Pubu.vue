@@ -1,12 +1,13 @@
 <template>
-  <div class="goods" :style="{height:sumHeight}" :class="layoutClass">
+  <div class="goods" :style="{height:sumHeight}" :class="layoutClass" ref="goods" @scroll="onScrollChange">
     <div
       class="goods-item"
-      v-for="(item, index) in sortGoodsData"
+      v-for="(item, index) in sortArr"
       :key="index"
       :style="itemStyle[index]"
       :class="layoutItemClass"
       ref="goodsItem"
+      @click="go(item)"
     >
       <img class="goods-item-img" :src="item.img" alt :style="arr[index]" />
       <div class="goods-item-desc">
@@ -28,7 +29,6 @@
 import Direct from './Direct';
 import Nohave from './NoHave';
 export default {
-  name: 'goods',
   props: {
     // 数据源
     sortGoodsData: {
@@ -41,6 +41,10 @@ export default {
       type: String,
       default: '1'
     },
+    sort: {
+      type: String,
+      default: '1'
+    }
   },
   data() {
     return {
@@ -58,7 +62,10 @@ export default {
       margintop: 8,
       layoutClass: 'goods-list',
       layoutItemClass: 'goods-list-item',
-      imgStyles:[]
+      imgStyles: [],
+      // 存储排序的数组
+      sortArr: [],
+      scrollTopValue:0
     }
   },
   components: {
@@ -67,14 +74,24 @@ export default {
   },
   mounted() {
     this.imgHeight();
-    // console.log(this.arr)
     this.$nextTick(() => {
       this.initWaterfall()
-      // console.log(this.itemStyle)
-    })
+      this.setSortGoodsData()
+    }, 20)
     this.initLayout()
   },
+  activated: function () {
+        /**
+         * 定位页面滑动位置，需要配合keepAlive 来使用
+         */
+        // console.log(this.scrollTopValue)
+        this.$refs.goods.scrollTop = this.scrollTopValue;
+    },
   methods: {
+    // 跳转页面
+    go(item){
+      this.$emit('godetail',item)
+    },
     // 一个随机高度
     randomHeight() {
       let result = 0;
@@ -119,8 +136,52 @@ export default {
       this.sumHeight = (leftHeight > rightHeight ? leftHeight : rightHeight) + 'px'
     },
     /**
-            * 设置布局
-            */
+     * 商品列表排序
+    */
+    setSortGoodsData() {
+      switch (this.sort) {
+        case '1':
+          this.sortArr = this.sortGoodsData.slice(0)
+          break
+        case '1-2':
+          this.getSort('price')
+          break
+        case '1-3':
+          this.getSort('volume')
+          break
+        case '2':
+          this.getSort('isHave')
+          break
+        case '3':
+          this.getSort('isDirect')
+          break
+      }
+    },
+    /**
+     * 如果返回-1 则v1在v2前面
+     * 反之
+    */
+    getSort(key) {
+      this.sortArr.sort((goods1, goods2) => {
+        let v1 = goods1[key], v2 = goods2[key];
+        if (typeof v1 === Boolean) {
+          if (v1) {
+            return -1
+          }
+          if (v2) {
+            return 1
+          }
+          return 0
+        }
+        if (parseFloat(v1) >= parseFloat(v2)) {
+          return -1
+        }
+        return 1
+      })
+    },
+    /**
+    * 设置布局
+     */
     initLayout: function () {
       this.goodsViewHeight = '100%';
       this.itemStyle = [];
@@ -136,15 +197,18 @@ export default {
           break;
         case '3':
           this.layoutClass = 'goods-waterfall',
-          this.layoutItemClass = 'goods-waterfall-item';
+            this.layoutItemClass = 'goods-waterfall-item';
           this.imgHeight();
           setTimeout(() => {
-          this.initWaterfall();            
+            this.initWaterfall();
           }, 20);
           break;
       }
     },
- 
+    onScrollChange(e){
+      this.scrollTopValue = e.target.scrollTop
+    }
+
   },
   watch: {
     sort: function () {
@@ -167,7 +231,7 @@ export default {
 <style lang="scss" scoped>
 @import "@css/dimens.scss";
 @import "@css/colors.scss";
-@import '@css/mixin.scss';
+@import "@css/mixin.scss";
 .goods {
   background-color: $bgColor;
   &-scroll {
