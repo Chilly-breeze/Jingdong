@@ -22,6 +22,11 @@ export default new Router({
       path: '/detail',
       name: 'detail',
       component: () => import('@c/goodsdetail/GoodsDetail.vue')
+    },
+    {
+      path:'/buy',
+      name:'buy',
+      component:()=>import('@c/buy/Buy.vue')
     }
   ]
 })

@@ -120,8 +120,29 @@ export default {
     changescroll(Y) {
       this.scrollY = Y
     },
-    onAddGoodsClick() {},
-    onBuyClick() {},
+    onAddGoodsClick() {
+       this.$store.commit('addShoppiongData', this.goodsdetail);
+       console.log(this.goodsdetail)
+      alert("添加成功")
+      this.$router.push({
+        name:'home',
+        params:{
+            routerType: 'push',
+            componentIndex: 1
+        }
+      })
+    },
+    onBuyClick() {
+      let item = this.goodsdetail
+      // console.log(item)
+      this.$router.push({
+        path:'/buy',
+        query:{
+          goodsDetail:item
+        }
+      })
+
+    },
   },
   computed: {
     leftImgOpacity() {

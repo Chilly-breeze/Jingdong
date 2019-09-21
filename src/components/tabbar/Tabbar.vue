@@ -8,7 +8,7 @@
 </template>
 
 <script type="text/javascript">
-export default {
+export default {    
   data() {
     return {
         box:[
@@ -41,7 +41,10 @@ export default {
       changeTab(item,index){
           this.setIndex = index
           this.$emit('changeComponent',item.componentName)
-      }
+      },
+       onChangeComponent: function (index) {
+            this.changeTab(this.box[index], index);
+    }
   }
 }
 </script>

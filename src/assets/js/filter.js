@@ -1,7 +1,7 @@
 import Vue from 'vue'
 Vue.filter('tofix2', (val) => {
     if (!val) {
-        return ''
+        return '0.00'
     }
     let result = parseFloat(val);
     if (Number.isInteger(result)) {

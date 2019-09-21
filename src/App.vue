@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <transition :name="transitionName">
-      <keep-alive exclude="detail">
-        <router-view />
+      <keep-alive >
+        <router-view/>
       </keep-alive>
     </transition>
   </div>
@@ -20,7 +20,7 @@ export default {
   watch:{
     '$route':function (to) {
       const routerType = to.params.routerType;
-      let keepAlivename =  to.name
+      // let keepAlivename =  to.name
       // console.log(routerType)
       if( routerType == 'push') {
         // console.log(this.keepAliveNames)

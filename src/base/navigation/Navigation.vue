@@ -49,6 +49,7 @@ export default {
   methods:{
     goback(){
       this.$router.go(-1)
+      this.$emit('goodsDetail')
     }
   }
 }
@@ -86,7 +87,7 @@ export default {
       align-self: center;
       margin: 0 auto;
       font-size: 20px;
-      color:#333;
+      color:#fff;
     }
   }
 }

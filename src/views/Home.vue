@@ -1,14 +1,13 @@
 <template>
   <div class="home1">
       <Component :is="current"></Component>
-      <Tabbar @changeComponent="changeComponent"></Tabbar>
+      <Tabbar @changeComponent="changeComponent" ref="toolBar"></Tabbar>
   </div>
 </template>
 
 <script>
 import Tabbar from '@c/tabbar/Tabbar.vue';
 export default {
-  name:'hw',
   data(){
       return {
           current:'home'
@@ -24,7 +23,16 @@ export default {
       changeComponent(item){
         //   console.log(item)
           this.current = item
+      },
+      pushComponent(){
+         let componentIndex = this.$route.params.componentIndex;
+        //  console.log(this.componentIndex)
+         if(!componentIndex) return 
+          this.$refs.toolBar.onChangeComponent(componentIndex)
       }
+  },
+  activated(){
+    this.pushComponent();
   }
 }
 </script>
