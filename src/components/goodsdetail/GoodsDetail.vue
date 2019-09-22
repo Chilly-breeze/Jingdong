@@ -121,16 +121,25 @@ export default {
       this.scrollY = Y
     },
     onAddGoodsClick() {
+      let that = this
+
        this.$store.commit('addShoppiongData', this.goodsdetail);
-       console.log(this.goodsdetail)
-      alert("添加成功")
-      this.$router.push({
+      //  console.log(this.goodsdetail)
+      // alert("添加成功")
+      this.$toast.success({
+            duration:300,
+            message:'加入成功'
+      })
+      setTimeout(()=>{
+      that.$router.push({
         name:'home',
         params:{
             routerType: 'push',
             componentIndex: 1
         }
       })
+      },400)
+    
     },
     onBuyClick() {
       let item = this.goodsdetail
