@@ -75,9 +75,10 @@ export default {
       });
 
       this.shopping.splice(index,1);
-      let bendi = JSON.parse(localStorage.getItem('shoppingDatas'))
-      let newVal = bendi.splice(index,1)
-      localStorage.setItem('shoppingDatas',JSON.stringify(newVal))
+      // let bendi = JSON.parse(localStorage.getItem('shoppingDatas'))
+      // let newVal = bendi.splice(index,1)
+      this.$store.commit('removeBuy',index)
+
 
       // 提示
       setTimeout(()=>{
@@ -105,6 +106,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .shopping {
   position: absolute;
   font-size: 16px;

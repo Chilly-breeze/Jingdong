@@ -58,6 +58,11 @@ export default new Vuex.Store({
     jian(state,index){
       state.shoppingDatas[index].number -= 1
       localStorage.setItem("shoppingDatas", JSON.stringify(state.shoppingDatas))    
+    },
+    // 删除
+    removeBuy(state,index){
+      state.shoppingDatas.splice(index,1)
+      localStorage.setItem("shoppingDatas", JSON.stringify(state.shoppingDatas))      
     }
   },
   actions: {
